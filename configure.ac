@@ -31,12 +31,12 @@ AC_PROG_LIBTOOL
 AM_PROG_LIBTOOL
 
 
-PKG_CHECK_MODULES([COLLECTIONS], [collections],
+PKG_CHECK_MODULES([COLLECTIONS], [collections-static],
 	[AC_MSG_NOTICE([Found libcollections])],
 	[AC_MSG_ERROR([Missing libcollections])],
 )
 
-PKG_CHECK_MODULES([UTILITY], [utility],
+PKG_CHECK_MODULES([UTILITY], [utility-static],
 	[AC_MSG_NOTICE([Found libutility])],
 	[AC_MSG_ERROR([Missing libutility])],
 )
