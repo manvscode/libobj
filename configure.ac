@@ -36,9 +36,9 @@ PKG_CHECK_MODULES([COLLECTIONS], [collections-static],
 	[AC_MSG_ERROR([Missing libcollections])],
 )
 
-PKG_CHECK_MODULES([UTILITY], [utility-static],
-	[AC_MSG_NOTICE([Found libutility])],
-	[AC_MSG_ERROR([Missing libutility])],
+PKG_CHECK_MODULES([XTD], [xtd-static],
+	[AC_MSG_NOTICE([Found libxtd])],
+	[AC_MSG_ERROR([Missing libxtd])],
 )
 
 
