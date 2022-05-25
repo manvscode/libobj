@@ -43,5 +43,4 @@ lib/.dirstamp
 src/.deps
 src/stamp-h1
 tests/.deps
-src/libsimplegl-config.h
-src/libsimplegl-config.h.in
+src/libobj-config.h
