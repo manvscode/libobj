@@ -19,6 +19,7 @@ bin
 
 # pkg-config file
 obj.pc
+obj-static.pc
 
 # Autoconf files
 Makefile

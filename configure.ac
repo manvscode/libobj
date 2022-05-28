@@ -24,54 +24,28 @@ AH_BOTTOM([
 ])
 AX_EXT
 
-
 AM_PROG_AR
-LT_INIT([static])
+LT_INIT([static shared win32-dll])
 AC_PROG_LIBTOOL
 AM_PROG_LIBTOOL
-
-
-PKG_CHECK_MODULES([COLLECTIONS], [collections-static],
-	[AC_MSG_NOTICE([Found libcollections])],
-	[AC_MSG_ERROR([Missing libcollections])],
-)
 
 PKG_CHECK_MODULES([XTD], [xtd-static],
 	[AC_MSG_NOTICE([Found libxtd])],
 	[AC_MSG_ERROR([Missing libxtd])],
 )
 
-
-
-# -------------------------------------------------
-#AC_ARG_ENABLE([tests],
-	#[AS_HELP_STRING([--enable-tests], [Enable test programs.])],
-	#[:],
-	#[enable_tests=no])
-
-#AM_CONDITIONAL([ENABLE_TESTS], [test "x$enable_tests" = "xyes"])
-# -------------------------------------------------
+PKG_CHECK_MODULES([COLLECTIONS], [collections-static],
+	[AC_MSG_NOTICE([Found libcollections])],
+	[AC_MSG_ERROR([Missing libcollections])],
+)
 
 AC_PROG_INSTALL
-
-echo "------------------------------------------------------------------------------"
-if [test -z "$CFLAGS"]; then
-	echo "  CFLAGS: Not set"
-else
-	echo "  CFLAGS: $CFLAGS"
-fi
-if [test -z "$LDFLAGS"]; then
-	echo " LDFLAGS: Not set"
-else
-	echo " LDFLAGS: $LDFLAGS"
-fi
-echo "------------------------------------------------------------------------------"
 
 AC_CONFIG_FILES([
 	Makefile
 	src/Makefile
+	obj-static.pc
 	obj.pc
 ])
 
 AC_OUTPUT
-
