@@ -1,7 +1,7 @@
 AC_PREREQ(2.67)
 AC_INIT([obj], [1.0.0], [manvscode@gmail.com], [obj], [http://www.joemarrero.com/])
 AM_INIT_AUTOMAKE([1.13 foreign silent-rules dist-zip -Wall -Werror])
-#AC_CONFIG_MACRO_DIRS([m4])
+AC_CONFIG_MACRO_DIRS([m4])
 
 # Enable silent build when possible.
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
@@ -29,12 +29,12 @@ LT_INIT([static shared win32-dll])
 AC_PROG_LIBTOOL
 AM_PROG_LIBTOOL
 
-PKG_CHECK_MODULES([XTD], [xtd-static],
+PKG_CHECK_MODULES([XTD], [xtd],
 	[AC_MSG_NOTICE([Found libxtd])],
 	[AC_MSG_ERROR([Missing libxtd])],
 )
 
-PKG_CHECK_MODULES([COLLECTIONS], [collections-static],
+PKG_CHECK_MODULES([COLLECTIONS], [collections],
 	[AC_MSG_NOTICE([Found libcollections])],
 	[AC_MSG_ERROR([Missing libcollections])],
 )

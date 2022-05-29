@@ -76,7 +76,12 @@ const size_t* obj_face_normal_indices( const obj_face_t* f );
 size_t obj_face_normal_indices_count( const obj_face_t* f );
 
 const obj_vertex_t* obj_loader_vertices( const obj_loader_t* ol );
+const size_t obj_loader_vertices_count( const obj_loader_t* ol );
+
 const obj_texture_coord_t* obj_loader_texture_coords( const obj_loader_t* ol );
+const size_t obj_loader_texture_coords_count( const obj_loader_t* ol );
+
 const obj_normal_t* obj_loader_normals( const obj_loader_t* ol );
+const size_t obj_loader_normals_count( const obj_loader_t* ol );
 
 #endif /* _LIBOBJ_H_ */

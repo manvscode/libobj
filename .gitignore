@@ -45,3 +45,4 @@ src/.deps
 src/stamp-h1
 tests/.deps
 src/libobj-config.h
+m4

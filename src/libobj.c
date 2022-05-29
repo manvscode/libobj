@@ -466,12 +466,27 @@ const obj_vertex_t* obj_loader_vertices( const obj_loader_t* ol )
     return ol->vertices;
 }
 
+const size_t obj_loader_vertices_count( const obj_loader_t* ol )
+{
+    return lc_vector_size(ol->vertices);
+}
+
 const obj_texture_coord_t* obj_loader_texture_coords( const obj_loader_t* ol )
 {
     return ol->texture_coords;
 }
 
+const size_t obj_loader_texture_coords_count( const obj_loader_t* ol )
+{
+    return lc_vector_size(ol->texture_coords);
+}
+
 const obj_normal_t* obj_loader_normals( const obj_loader_t* ol )
 {
     return ol->normals;
+}
+
+const size_t obj_loader_normals_count( const obj_loader_t* ol )
+{
+    return lc_vector_size(ol->normals);
 }
