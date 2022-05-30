@@ -29,12 +29,12 @@ LT_INIT([static shared win32-dll])
 AC_PROG_LIBTOOL
 AM_PROG_LIBTOOL
 
-PKG_CHECK_MODULES([XTD], [xtd],
+PKG_CHECK_MODULES([XTD], [xtd-static],
 	[AC_MSG_NOTICE([Found libxtd])],
 	[AC_MSG_ERROR([Missing libxtd])],
 )
 
-PKG_CHECK_MODULES([COLLECTIONS], [collections],
+PKG_CHECK_MODULES([COLLECTIONS], [collections-static],
 	[AC_MSG_NOTICE([Found libcollections])],
 	[AC_MSG_ERROR([Missing libcollections])],
 )
