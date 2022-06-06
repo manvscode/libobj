@@ -8,10 +8,19 @@ A library for loading Alias Wavefront OBJ files.
 * make
 * make install
 
+## Caveaats and Limitations
+* Some OBJ files may not have any groups defined. If such a file is encountered, then a `default` group is created and all of the geometry is placed into it.
+* Some elements are currently unsupported:
+	* Line elements are ignored; these are lines that start with a `l` character.
+	* Object names are ignored; these are lines that start with a `o` character.
+	* All material references (i.e. `mtllib`, `usemtl`, `s`).
+* Relative indices are not supported.
+* Any unexpected lines are ignored.
+
 # License
 You may use *libobj* in a commercial product as long as the below copyright is retained in the source directory and on all source files.
 
-    Copyright (C) 2013-2015 by Joseph A. Marrero, http://www.manvscode.com/
+    Copyright (C) 2016-2022 by Joseph A. Marrero, https://joemarrero.com/
     
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal

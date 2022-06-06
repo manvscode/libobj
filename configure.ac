@@ -1,5 +1,5 @@
 AC_PREREQ(2.67)
-AC_INIT([obj], [1.0.0], [manvscode@gmail.com], [obj], [http://www.joemarrero.com/])
+AC_INIT([obj], [1.0.0], [manvscode@gmail.com], [obj], [http://joemarrero.com/])
 AM_INIT_AUTOMAKE([1.13 foreign silent-rules dist-zip -Wall -Werror])
 AC_CONFIG_MACRO_DIRS([m4])
 
@@ -39,11 +39,19 @@ PKG_CHECK_MODULES([COLLECTIONS], [collections-static],
 	[AC_MSG_ERROR([Missing libcollections])],
 )
 
+AC_ARG_ENABLE([examples],
+	[AS_HELP_STRING([--enable-examples], [Enable building the example programs.])],
+	[:],
+	[enable_examples=no])
+
+AM_CONDITIONAL([ENABLE_EXAMPLES], [test "$enable_examples" = "yes"])
+
 AC_PROG_INSTALL
 
 AC_CONFIG_FILES([
 	Makefile
 	src/Makefile
+	examples/Makefile
 	obj-static.pc
 	obj.pc
 ])

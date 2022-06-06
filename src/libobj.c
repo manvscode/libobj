@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 by Joseph A. Marrero. http://www.manvscode.com/
+ * Copyright (C) 2016-2022 by Joseph A. Marrero. https://joemarrero.com/
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,6 +27,9 @@
 #include <collections/vector.h>
 #include <xtd/string.h>
 #include "libobj.h"
+
+void obj_loader_destroy_data( obj_loader_t* ol );
+obj_group_t obj_loader_initialize_group( const char* name );
 
 typedef enum obj_elem {
     ELM_UNKNOWN = 0,
@@ -119,8 +122,7 @@ static void obj_loader_parse_face( obj_loader_t* ol, bool verbose, char** line_t
 			printf( "[OBJLoader] No group defined yet, so I am adding a default group.\n" );
 		}
 
-		obj_group_t g;
-		g.name = "default";
+		obj_group_t g = obj_loader_initialize_group( "default" );
 
 		lc_vector_push( ol->groups, g );
 		*current_group = &lc_vector_last( ol->groups );
@@ -207,18 +209,25 @@ static void obj_loader_parse_group( obj_loader_t* ol, bool verbose, char** line_
 		if( is_new_group )
 		{
 			// Create a new group and add it...
-			obj_group_t g;
-			g.name = string_dup( name );
-			g.faces = NULL;
+			obj_group_t g = obj_loader_initialize_group( name );
 
-			lc_vector_create( g.faces, 1 );
 			lc_vector_push( ol->groups, g );
 		}
 		*current_group = &lc_vector_last( ol->groups );
 	}
 }
 
-obj_loader_t* obj_loader_create_from_file( const char *filename, bool verbose )
+obj_group_t obj_loader_initialize_group( const char* name )
+{
+	obj_group_t g;
+	g.name = string_dup( name );
+	g.faces = NULL;
+	lc_vector_create( g.faces, 1 );
+
+	return g;
+}
+
+obj_loader_t* obj_loader_load( const char *filename, bool verbose )
 {
     assert( filename != NULL && *filename != '\0' ); // must be a valid filename
 
@@ -227,84 +236,92 @@ obj_loader_t* obj_loader_create_from_file( const char *filename, bool verbose )
 
     if( file )
     {
-        ol = obj_loader_create( );
-        obj_group_t* current_group = NULL;
-
-        if( ol )
-        {
-            char line[ 512 ];
-            char* line_token_ctx = NULL;
-
-            while( !feof(file) ) // read in the file...
-            {
-                if( fgets( line, sizeof(line) - 1, file ) )
-                {
-                	line[ sizeof(line) - 1 ] = '\0';
-                }
-                else if( feof(file) )
-                {
-                    break;
-                }
-                else
-                {
-                    fprintf( stderr, "Unable to read line.\n" );
-                    break;
-                }
-
-				string_trim( line, WHITESPACE );
-
-                if( *line == '\0' ) continue; // skip empty lines...
-
-                char *token = string_tokenize_r( line, DELIMETERS, &line_token_ctx );
-                if( !token ) continue;
-                obj_elem_t elem = obj_loader_element( token );
-
-                switch( elem )
-                {
-                    case ELM_VERTEX:
-                    {
-						obj_loader_parse_vertex( ol, verbose, &line_token_ctx );
-                        break;
-                    }
-                    case ELM_NORMAL:
-                    {
-						obj_loader_parse_normal( ol, verbose, &line_token_ctx );
-                        break;
-                    }
-                    case ELM_TEXTURECOORD:
-                    {
-						obj_loader_parse_texture_coord( ol, verbose, &line_token_ctx );
-                        break;
-                    }
-                    case ELM_FACE:
-                    {
-						obj_loader_parse_face( ol, verbose, &line_token_ctx, &current_group );
-                        break;
-                    }
-                    case ELM_GROUP:
-                    {
-						obj_loader_parse_group( ol, verbose, &line_token_ctx, &current_group );
-                        break;
-                    }
-                    case ELM_OTHER:
-                    default:
-                    {
-                        if( verbose )
-                        {
-                            printf( "[OBJLoader] Unknown element; Skipping line...\n\t %s\n", line );
-                        }
-                        continue;
-                    }
-                }
-
-                line[ 0 ] = '\0';
-            }
-        }
-
+		ol = obj_loader_from_file(file, verbose);
         fclose(file);
     }
 
     return ol;
+}
+
+obj_loader_t* obj_loader_from_file( FILE* file, bool verbose )
+{
+	assert( file ); // Must be a valid file
+    obj_loader_t* ol = obj_loader_create( );
+
+	if( ol )
+	{
+		obj_group_t* current_group = NULL;
+
+		char line[ 512 ];
+		char* line_token_ctx = NULL;
+
+		while( !feof(file) ) // read in the file...
+		{
+			if( fgets( line, sizeof(line) - 1, file ) )
+			{
+				line[ sizeof(line) - 1 ] = '\0';
+			}
+			else if( feof(file) )
+			{
+				break;
+			}
+			else
+			{
+				fprintf( stderr, "Unable to read line.\n" );
+				break;
+			}
+
+			string_trim( line, WHITESPACE );
+
+			if( *line == '\0' ) continue; // skip empty lines...
+
+			char *token = string_tokenize_r( line, DELIMETERS, &line_token_ctx );
+			if( !token ) continue;
+			obj_elem_t elem = obj_loader_element( token );
+
+			switch( elem )
+			{
+				case ELM_VERTEX:
+				{
+					obj_loader_parse_vertex( ol, verbose, &line_token_ctx );
+					break;
+				}
+				case ELM_NORMAL:
+				{
+					obj_loader_parse_normal( ol, verbose, &line_token_ctx );
+					break;
+				}
+				case ELM_TEXTURECOORD:
+				{
+					obj_loader_parse_texture_coord( ol, verbose, &line_token_ctx );
+					break;
+				}
+				case ELM_FACE:
+				{
+					obj_loader_parse_face( ol, verbose, &line_token_ctx, &current_group );
+					break;
+				}
+				case ELM_GROUP:
+				{
+					obj_loader_parse_group( ol, verbose, &line_token_ctx, &current_group );
+					break;
+				}
+				case ELM_OTHER:
+				default:
+				{
+					if( verbose )
+					{
+						printf( "[OBJLoader] Unknown element; Skipping line...\n\t %s\n", line );
+					}
+					continue;
+				}
+			}
+
+			line[ 0 ] = '\0';
+		}
+	}
+
+	return ol;
 }
 
 obj_loader_t* obj_loader_create( void )
@@ -331,24 +348,16 @@ void obj_loader_destroy( obj_loader_t** ol )
 {
     if( ol && *ol )
     {
-        obj_loader_clear( *ol );
+        obj_loader_destroy_data( *ol );
         free( *ol );
         *ol = NULL;
     }
 }
 
-void obj_loader_clear( obj_loader_t* ol )
+void obj_loader_destroy_data( obj_loader_t* ol )
 {
     assert( ol );
 
-    lc_vector_destroy( ol->groups );
-    ol->groups         = NULL;
-    lc_vector_destroy( ol->vertices );
-    ol->vertices       = NULL;
-    lc_vector_destroy( ol->texture_coords );
-    ol->texture_coords = NULL;
-    lc_vector_destroy( ol->normals );
-    ol->normals        = NULL;
 
     for( int g = 0; g < lc_vector_size(ol->groups); g++ )
     {
@@ -370,8 +379,29 @@ void obj_loader_clear( obj_loader_t* ol )
         group->faces = NULL;
     }
 
-    lc_vector_destroy( ol->groups );
-    ol->groups = NULL;
+	if( ol->vertices )
+	{
+		lc_vector_destroy( ol->vertices );
+		ol->vertices = NULL;
+	}
+
+	if( ol->texture_coords )
+	{
+		lc_vector_destroy( ol->texture_coords );
+		ol->texture_coords = NULL;
+	}
+
+	if( ol->normals )
+	{
+		lc_vector_destroy( ol->normals );
+		ol->normals = NULL;
+	}
+
+	if( ol->groups )
+	{
+		lc_vector_destroy( ol->groups );
+		ol->groups = NULL;
+	}
 }
 
 obj_elem_t obj_loader_element( const char *token )
@@ -421,7 +451,7 @@ const char* obj_group_name( const obj_group_t* g )
     return g->name;
 }
 
-const obj_face_t* obj_group_faces( const obj_group_t* g, size_t index )
+const obj_face_t* obj_group_face( const obj_group_t* g, size_t index )
 {
     return &g->faces[ index ];
 }

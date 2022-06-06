@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 by Joseph A. Marrero. http://www.manvscode.com/
+ * Copyright (C) 2016-2022 by Joseph A. Marrero. https://joemarrero.com/
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -54,17 +54,39 @@ typedef struct obj_group obj_group_t;
 struct obj_loader;
 typedef struct obj_loader obj_loader_t;
 
-obj_loader_t* obj_loader_create_from_file( const char *filename, bool verbose );
+obj_loader_t* obj_loader_load( const char *filename, bool verbose );
+obj_loader_t* obj_loader_from_file( FILE* file, bool verbose );
+
 obj_loader_t* obj_loader_create( void );
 void obj_loader_destroy( obj_loader_t** ol );
-void obj_loader_clear( obj_loader_t* ol );
+
+/*
+ * Get a group
+ */
 const obj_group_t* obj_loader_group_at( const obj_loader_t* ol, size_t index );
 size_t obj_loader_group_count( obj_loader_t* ol );
 
-const char* obj_group_name( const obj_group_t* g );
-const obj_face_t* obj_group_faces( const obj_group_t* g, size_t index );
-size_t obj_group_faces_count( const obj_group_t* g );
+/*
+ * Get a pointer to the global list of vertices.
+ */
+const obj_vertex_t* obj_loader_vertices( const obj_loader_t* ol );
+const size_t obj_loader_vertices_count( const obj_loader_t* ol );
 
+/*
+ * Get a pointer to the global list of texture coordinates.
+ */
+const obj_texture_coord_t* obj_loader_texture_coords( const obj_loader_t* ol );
+const size_t obj_loader_texture_coords_count( const obj_loader_t* ol );
+
+/*
+ * Get a pointer to the global list of normals.
+ */
+const obj_normal_t* obj_loader_normals( const obj_loader_t* ol );
+const size_t obj_loader_normals_count( const obj_loader_t* ol );
+
+const char* obj_group_name( const obj_group_t* g );
+const obj_face_t* obj_group_face( const obj_group_t* g, size_t index );
+size_t obj_group_faces_count( const obj_group_t* g );
 
 const size_t* obj_face_vertex_indices( const obj_face_t* f );
 size_t obj_face_vertex_indices_count( const obj_face_t* f );
@@ -75,13 +97,5 @@ size_t obj_face_texture_coords_indices_count( const obj_face_t* f );
 const size_t* obj_face_normal_indices( const obj_face_t* f );
 size_t obj_face_normal_indices_count( const obj_face_t* f );
 
-const obj_vertex_t* obj_loader_vertices( const obj_loader_t* ol );
-const size_t obj_loader_vertices_count( const obj_loader_t* ol );
-
-const obj_texture_coord_t* obj_loader_texture_coords( const obj_loader_t* ol );
-const size_t obj_loader_texture_coords_count( const obj_loader_t* ol );
-
-const obj_normal_t* obj_loader_normals( const obj_loader_t* ol );
-const size_t obj_loader_normals_count( const obj_loader_t* ol );
 
 #endif /* _LIBOBJ_H_ */
